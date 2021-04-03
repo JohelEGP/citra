@@ -217,6 +217,13 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
+       <widget class="QPushButton" name="editor_button">
+        <property name="text">
+         <string>Edit Custom Screen Layout</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QLabel" name="label1">
@@ -245,6 +252,11 @@
           <item>
            <property name="text">
             <string>Side by Side</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Custom</string>
            </property>
           </item>
          </widget>

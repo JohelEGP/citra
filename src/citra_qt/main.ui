@@ -125,6 +125,7 @@
      <addaction name="action_Screen_Layout_Single_Screen"/>
      <addaction name="action_Screen_Layout_Large_Screen"/>
      <addaction name="action_Screen_Layout_Side_by_Side"/>
+     <addaction name="action_Screen_Layout_Custom"/>
      <addaction name="separator"/>
      <addaction name="action_Screen_Layout_Upright_Screens"/>
      <addaction name="action_Screen_Layout_Swap_Screens"/>
@@ -235,20 +236,20 @@
    </property>
   </action>
   <action name="action_Save">
-    <property name="enabled">
-      <bool>false</bool>
-    </property>
-    <property name="text">
-      <string>Save</string>
-    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
   </action>
   <action name="action_Load">
-    <property name="enabled">
-      <bool>false</bool>
-    </property>
-    <property name="text">
-      <string>Load</string>
-    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
   </action>
   <action name="action_FAQ">
    <property name="text">
@@ -459,6 +460,14 @@
    </property>
    <property name="text">
     <string>Side by Side</string>
+   </property>
+  </action>
+  <action name="action_Screen_Layout_Custom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Custom</string>
    </property>
   </action>
   <action name="action_Screen_Layout_Swap_Screens">

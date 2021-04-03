@@ -79,6 +79,12 @@ add_executable(citra-qt
     configuration/configure_web.cpp
     configuration/configure_web.h
     configuration/configure_web.ui
+    configuration/custom_screen.cpp
+    configuration/custom_screen.h
+    configuration/custom_screen.ui
+    configuration/custom_screen_layout_editor.cpp
+    configuration/custom_screen_layout_editor.h
+    configuration/custom_screen_layout_editor.ui
     debugger/console.h
     debugger/console.cpp
     debugger/graphics/graphics.cpp

@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <QWidget>
+#include "citra_qt/configuration/custom_screen_layout_editor.h"
 
 namespace Settings {
 enum class StereoRenderOption;
@@ -31,5 +32,6 @@ private:
     void updateTextureFilter(int index);
 
     std::unique_ptr<Ui::ConfigureEnhancements> ui;
+    std::unique_ptr<CustomScreenLayoutEditor> layout_editor;
     QColor bg_color;
 };

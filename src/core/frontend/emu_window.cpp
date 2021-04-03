@@ -151,32 +151,31 @@ void EmuWindow::UpdateCurrentFramebufferLayout(unsigned width, unsigned height) 
     const auto min_size =
         Layout::GetMinimumSizeFromLayout(layout_option, Settings::values.upright_screen);
 
-    if (Settings::values.custom_layout == true) {
+    width = std::max(width, min_size.first);
+    height = std::max(height, min_size.second);
+    switch (layout_option) {
+    case Settings::LayoutOption::Custom:
         layout = Layout::CustomFrameLayout(width, height);
-    } else {
-        width = std::max(width, min_size.first);
-        height = std::max(height, min_size.second);
-        switch (layout_option) {
-        case Settings::LayoutOption::SingleScreen:
-            layout = Layout::SingleFrameLayout(width, height, Settings::values.swap_screen,
-                                               Settings::values.upright_screen);
-            break;
-        case Settings::LayoutOption::LargeScreen:
-            layout = Layout::LargeFrameLayout(width, height, Settings::values.swap_screen,
-                                              Settings::values.upright_screen);
-            break;
-        case Settings::LayoutOption::SideScreen:
-            layout = Layout::SideFrameLayout(width, height, Settings::values.swap_screen,
-                                             Settings::values.upright_screen);
-            break;
-        case Settings::LayoutOption::Default:
-        default:
-            layout = Layout::DefaultFrameLayout(width, height, Settings::values.swap_screen,
-                                                Settings::values.upright_screen);
-            break;
-        }
-        UpdateMinimumWindowSize(min_size);
+        break;
+    case Settings::LayoutOption::SingleScreen:
+        layout = Layout::SingleFrameLayout(width, height, Settings::values.swap_screen,
+                                           Settings::values.upright_screen);
+        break;
+    case Settings::LayoutOption::LargeScreen:
+        layout = Layout::LargeFrameLayout(width, height, Settings::values.swap_screen,
+                                          Settings::values.upright_screen);
+        break;
+    case Settings::LayoutOption::SideScreen:
+        layout = Layout::SideFrameLayout(width, height, Settings::values.swap_screen,
+                                         Settings::values.upright_screen);
+        break;
+    case Settings::LayoutOption::Default:
+    default:
+        layout = Layout::DefaultFrameLayout(width, height, Settings::values.swap_screen,
+                                            Settings::values.upright_screen);
+        break;
     }
+    UpdateMinimumWindowSize(min_size);
     NotifyFramebufferLayoutChanged(layout);
 }
 

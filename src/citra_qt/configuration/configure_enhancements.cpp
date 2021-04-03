@@ -2,16 +2,41 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
+#include <cassert>
 #include <QColorDialog>
+#include <QPoint>
+#include <QString>
 #include "citra_qt/configuration/configure_enhancements.h"
+#include "core/3ds.h"
 #include "core/core.h"
 #include "core/settings.h"
 #include "ui_configure_enhancements.h"
 #include "video_core/renderer_opengl/post_processing_opengl.h"
 #include "video_core/renderer_opengl/texture_filters/texture_filterer.h"
 
+namespace {
+
+const QString g_top_screen_name{QObject::tr("Top")};
+const QString g_bottom_screen_name{QObject::tr("Bottom")};
+
+void AddScreens(CustomScreenLayoutEditor& layout_editor) {
+    layout_editor.addScreen(
+        g_top_screen_name, {0, 0, Core::kScreenTopWidth, Core::kScreenTopHeight},
+        {QPoint{Settings::values.custom_top_left, Settings::values.custom_top_top},
+         QPoint{Settings::values.custom_top_right - 1, Settings::values.custom_top_bottom - 1}});
+    layout_editor.addScreen(
+        g_bottom_screen_name,
+        {40, Core::kScreenTopHeight, Core::kScreenBottomWidth, Core::kScreenBottomHeight},
+        {QPoint{Settings::values.custom_bottom_left, Settings::values.custom_bottom_top},
+         QPoint{Settings::values.custom_bottom_right - 1,
+                Settings::values.custom_bottom_bottom - 1}});
+}
+
+} // namespace
+
 ConfigureEnhancements::ConfigureEnhancements(QWidget* parent)
-    : QWidget(parent), ui(std::make_unique<Ui::ConfigureEnhancements>()) {
+    : QWidget(parent), ui(std::make_unique<Ui::ConfigureEnhancements>()),
+      layout_editor(std::make_unique<CustomScreenLayoutEditor>(this)) {
     ui->setupUi(this);
 
     for (const auto& filter : OpenGL::TextureFilterer::GetFilterNames())
@@ -19,15 +44,18 @@ ConfigureEnhancements::ConfigureEnhancements(QWidget* parent)
 
     SetConfiguration();
 
-    ui->layoutBox->setEnabled(!Settings::values.custom_layout);
-
     ui->resolution_factor_combobox->setEnabled(Settings::values.use_hw_renderer);
+
+    AddScreens(*layout_editor);
 
     connect(ui->render_3d_combobox,
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
             [this](int currentIndex) {
                 updateShaders(static_cast<Settings::StereoRenderOption>(currentIndex));
             });
+
+    connect(ui->editor_button, &QPushButton::clicked, this,
+            [this] { layout_editor->showMaximized(); });
 
     connect(ui->bg_button, &QPushButton::clicked, this, [this] {
         const QColor new_bg_color = QColorDialog::getColor(bg_color);
@@ -113,6 +141,23 @@ void ConfigureEnhancements::ApplyConfiguration() {
     Settings::values.texture_filter_name = ui->texture_filter_combobox->currentText().toStdString();
     Settings::values.layout_option =
         static_cast<Settings::LayoutOption>(ui->layout_combobox->currentIndex());
+    {
+        const auto geometry = [this](const QString& screen_name) {
+            const auto* const screen{layout_editor->getScreen(screen_name)};
+            assert(screen);
+            return screen->geometry();
+        };
+        const QRect top_screen{geometry(g_top_screen_name)};
+        Settings::values.custom_top_left = top_screen.left();
+        Settings::values.custom_top_top = top_screen.top();
+        Settings::values.custom_top_right = top_screen.right() + 1;
+        Settings::values.custom_top_bottom = top_screen.bottom() + 1;
+        const QRect bottom_screen{geometry(g_bottom_screen_name)};
+        Settings::values.custom_bottom_left = bottom_screen.left();
+        Settings::values.custom_bottom_top = bottom_screen.top();
+        Settings::values.custom_bottom_right = bottom_screen.right() + 1;
+        Settings::values.custom_bottom_bottom = bottom_screen.bottom() + 1;
+    }
     Settings::values.swap_screen = ui->swap_screen->isChecked();
     Settings::values.upright_screen = ui->upright_screen->isChecked();
     Settings::values.dump_textures = ui->toggle_dump_textures->isChecked();
